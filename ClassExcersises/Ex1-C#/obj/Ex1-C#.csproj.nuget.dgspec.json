@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices-\\ClassExcersises\\Ex1-C#\\Ex1-C#.csproj": {}
+    "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices\\ClassExcersises\\Ex1-C#\\Ex1-C#.csproj": {}
   },
   "projects": {
-    "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices-\\ClassExcersises\\Ex1-C#\\Ex1-C#.csproj": {
+    "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices\\ClassExcersises\\Ex1-C#\\Ex1-C#.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices-\\ClassExcersises\\Ex1-C#\\Ex1-C#.csproj",
+        "projectUniqueName": "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices\\ClassExcersises\\Ex1-C#\\Ex1-C#.csproj",
         "projectName": "Ex1-C#",
-        "projectPath": "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices-\\ClassExcersises\\Ex1-C#\\Ex1-C#.csproj",
+        "projectPath": "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices\\ClassExcersises\\Ex1-C#\\Ex1-C#.csproj",
         "packagesPath": "C:\\Users\\g0odl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices-\\ClassExcersises\\Ex1-C#\\obj\\",
+        "outputPath": "C:\\Users\\g0odl\\Documents\\GitHub\\DistributedCloudServices\\ClassExcersises\\Ex1-C#\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\g0odl\\AppData\\Roaming\\NuGet\\NuGet.Config",
