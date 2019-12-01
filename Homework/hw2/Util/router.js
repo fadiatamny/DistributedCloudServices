@@ -35,7 +35,19 @@ class Router {
         });
     }
 
-    use(routes) {
+    prefix(ref,pref){
+        ref.forEach(element => {
+            element.route = pref + element.route;
+        });
+    }
+
+    use(pref, routes) {
+        this.prefix(routes.getRoutes,pref);
+        this.prefix(routes.postRoutes,pref);
+        this.prefix(routes.putRoutes,pref);
+        this.prefix(routes.deleteRoutes,pref);
+        this.prefix(routes.updateRoutes,pref);
+
         this.getRoutes.push(...routes.getRoutes);
         this.postRoutes.push(...routes.postRoutes);
         this.putRoutes.push(...routes.putRoutes);

@@ -4,7 +4,7 @@ const router = new (require('./Util/router'))();
 const api = require('./api');
 const port = process.env.PORT || 1337;
 
-router.use(api);
+router.use('/api',api);
 
 http.createServer((req, res) => {
     router.handler(req, res);
