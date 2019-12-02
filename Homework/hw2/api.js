@@ -1,24 +1,45 @@
 const router = new(require('./Util/router'))();
+const Log = require('./Util/logger');
+const event = require('./Util/event');
 
-router.get('/hello', (req, res) => {
+function parseQuery(query){
+    let obj = {};
+    let list = query.split('&');
+    list.forEach(element => {
+        element = element.split('=');
+        obj[element[0]]=element[1];
+    });
+    return obj;
+};
+
+router.get('/addTicket', async (req, res) => {
+    Log.write('[GET] /addTicket - 200');
+    let query = parseQuery(req.url.split('\n')[0].split("?")[1]);
+    await event.addTicket(query.name);
     res.writeHeader(200);
     res.end('hello');
 });
 
-router.post('/insert', (req, res) => {
+router.post('/getAllTickets', (req, res) => {
     let body = "";
+
     req.on('data', chunk => {
         body += chunk.toString();
     });
-    req.on('end', () => {
 
-        const newDataItem = JSON.parse(body);
+    req.on('end', async () => {
+        let user = JSON.parse(body);
 
-        data.push(newDataItem);
-
-        console.log(body);
-
-        res.end('ok');
+        if(user.id != process.env.ADMIN_USER || user.password != process.env.ADMIN_PASSWORD){
+            Log.write('[POST] /getAllTickets - 403 - INCORRECT LOGIN');
+            res.writeHeader(403);
+            res.end('INVALID ACCESS');
+        }
+        else{
+            Log.write('[POST] /getAllTickets - 200');
+            res.writeHeader(200);
+            res.end(JSON.stringify(result));
+        }
     });
 });
 

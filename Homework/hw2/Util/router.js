@@ -56,8 +56,7 @@ class Router {
     }
 
     render(reference, req, res) {
-        let url = req.url.split('\n');
-
+        let url = req.url.split('\n')[0].split("?")[0];
         reference.forEach(element => {
             if (url == element.route) {
                 element.callback(req, res);
