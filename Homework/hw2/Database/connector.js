@@ -14,24 +14,14 @@ class Connector {
           
         this.db.configure("busyTimeout", 1000);
     }
-    /**
-     * 10 tickets
-     * user1 => request ticket   < ticket1
-     * user1 => request ticket   < ticket2
-     * user1 => request ticket   < ticket3
-     * user1 => request ticket   < ticket4 == invalid
-     * user1 => request ticket   < ticket5
-     * admin nop. no ticket 4.
-     * user1 => request ticket   < ticket4 //drop the invalid// inserting new one.
-     * user1 => request ticket   < ticket 6 // no invalids therefore count of table + 1 < MAX COUNT ;
-     */
+
     createTables() {
         this.db.run(
             "CREATE TABLE IF NOT EXISTS `ticket` (\
             `id` INTEGER PRIMARY KEY AUTOINCREMENT,\
-            `name` varchar(64),\
-            `timestamp` timestamp,\
-            `number` INTEGER,\
+            `name` varchar(64) NOT NULL,\
+            `timestamp` timestamp NOT NULL,\
+            `number` INTEGER UNIQUE NOT NULL,\
             `valid` boolean DEFAULT 1)"
         );
     }

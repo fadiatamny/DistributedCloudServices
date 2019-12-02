@@ -13,9 +13,9 @@ function parseQuery(query){
 };
 
 router.get('/addTicket', async (req, res) => {
-    Log.write('[GET] /addTicket - 200');
     let query = parseQuery(req.url.split('\n')[0].split("?")[1]);
     await event.addTicket(query.name);
+    Log.write('[GET] /addTicket - 200');
     res.writeHeader(200);
     res.end('hello');
 });
@@ -37,6 +37,7 @@ router.post('/getAllTickets', (req, res) => {
         }
         else{
             Log.write('[POST] /getAllTickets - 200');
+            let result = await event.getAllTickets();
             res.writeHeader(200);
             res.end(JSON.stringify(result));
         }
