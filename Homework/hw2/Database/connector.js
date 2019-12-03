@@ -6,7 +6,7 @@ class Connector {
         let self = this;
         this.db = new sqlite.Database(fileName, (err) => {
             if (err) {
-              console.log('Could not connect to database', err)
+              throw ({'status':500,'message':'Could not connect to database','err':err})
             }else{
                 this.createTables();
             }
@@ -30,6 +30,10 @@ class Connector {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
                 this.db.all(sql, params, (err, rows) => {
+                    if (err) {
+                        throw ({'status':500,'message':'Error performing query','err':err})
+                    }
+                    
                     if (rows) {
                         resolve(rows);
                         return;
@@ -44,7 +48,7 @@ class Connector {
     query(sql, params) {
         this.db.run(sql, params, (err) => {
             if (err) {
-              return console.error(err.message);
+                throw ({'status':500,'message':'Error performing query','err':err})
             }
         });
     }

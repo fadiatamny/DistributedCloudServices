@@ -13,7 +13,7 @@ class Event{
             FROM ticket";
             num = (await con.getData(sql))[0]['COUNT(id)'];
             if(num >= max)
-                throw('OVERFLOW IN TICKETS');
+                throw({'status':406,'message':'OVERFLOW IN TICKETS'});
             else
                 num++;
         }else{
