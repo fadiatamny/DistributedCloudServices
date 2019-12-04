@@ -3,11 +3,11 @@ var path = require('path');
 
 class Log {
 
-    static _moveLog(filename){
+    static _moveLog(filename) {
         let date = new Date();
         let distPath = process.env.LOG_BACKUPS || './backup/';
         let f = path.basename(filename).split('.');
-        f = f[0]+date.getTime()+'.'+f[1];
+        f = f[0] + date.getTime() + '.' + f[1];
         let dest = path.resolve(distPath, f);
         fs.rename(filename, dest, (err) => {
             if (err) throw err;
@@ -15,7 +15,6 @@ class Log {
     }
 
     static initialize() {
-        //gets file name and adds it to dir2
         let date = new Date();
         let filename = process.env.LOG_FILE || './log.txt';
         if (fs.existsSync(filename) && process.env.BACKUP_MODE == 'true') {
