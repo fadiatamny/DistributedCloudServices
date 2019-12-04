@@ -1,7 +1,8 @@
+const { EventEmitter } = require('events');
 const fs = require('fs');
 var path = require('path');
 
-class Log {
+class Log extends EventEmitter {
 
     static _moveLog(filename) {
         let date = new Date();
@@ -44,5 +45,10 @@ class Log {
     }
 
 }
+
+const log = (new Log())
+    .on('write', (data) => { Log.write(data); return;})
+    .on('initialize', ()=>{ Log.initialize(); return;})
+    .on('read', ()=>{ Log.read(); return;});
 
 module.exports = Log;

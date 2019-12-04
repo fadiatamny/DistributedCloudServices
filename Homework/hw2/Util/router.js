@@ -1,10 +1,10 @@
+
 class Router {
 
     constructor() {
         this.getRoutes = [];
         this.postRoutes = [];
         this.putRoutes = [];
-        this.updateRoutes = [];
         this.deleteRoutes = [];
     }
 
@@ -18,10 +18,6 @@ class Router {
 
     put(route, callback) {
         this.addtolist(this.putRoutes, route, callback);
-    }
-
-    update(route, callback) {
-        this.addtolist(this.updateRoutes, route, callback);
     }
 
     delete(route, callback) {
@@ -46,19 +42,17 @@ class Router {
         this.prefix(routes.postRoutes, pref);
         this.prefix(routes.putRoutes, pref);
         this.prefix(routes.deleteRoutes, pref);
-        this.prefix(routes.updateRoutes, pref);
 
         this.getRoutes.push(...routes.getRoutes);
         this.postRoutes.push(...routes.postRoutes);
         this.putRoutes.push(...routes.putRoutes);
         this.deleteRoutes.push(...routes.deleteRoutes);
-        this.updateRoutes.push(...routes.updateRoutes);
     }
 
     render(reference, req, res) {
-        let url = req.url.split('\n')[0].split("?")[0];
+        let url = req.url.split("?")[0];
         reference.forEach(element => {
-            if (url == element.route) {
+            if (url.toLowerCase().includes(element.route.toLowerCase())) {
                 element.callback(req, res);
                 return;
             }
@@ -76,10 +70,6 @@ class Router {
 
             case 'GET':
                 this.render(this.getRoutes, req, res);
-                break;
-
-            case 'UPDATE':
-                this.render(this.updateRoutes, req, res);
                 break;
 
             case 'DELETE':

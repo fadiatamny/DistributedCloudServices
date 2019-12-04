@@ -30,6 +30,7 @@ class Connector {
         );
     }
 
+
     async getData(sql, params) {
         return new Promise((resolve, reject) => {
             this.db.serialize(() => {
@@ -41,7 +42,6 @@ class Connector {
                             'err': err
                         })
                     }
-
                     if (rows) {
                         resolve(rows);
                         return;

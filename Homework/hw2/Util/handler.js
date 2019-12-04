@@ -1,3 +1,4 @@
+const Log = require('./logger');
 class Handler {
     static parseQuery(query) {
         let obj = {};
@@ -14,7 +15,7 @@ class Handler {
             err['status'] = 500
             err.message = 'SERVER ERROR';
         } else {
-            Log.write(`[POST] ${route} - ${err.status} - ${err.message}`);
+            Log.emit('write',`[POST] ${route} - ${err.status} - ${err.message}`);
             res.writeHeader(err.status);
             res.end(`Error occured - ${err.message}`);
         }
@@ -26,7 +27,7 @@ class Handler {
             'status': 403,
             'message': 'INVALID ACCESS - Missing AUTH key'
         };
-        query = parseQuery(query);
+        query = Handler.parseQuery(query);
         if (!query.key || query.key != process.env.KEY) throw {
             'status': 403,
             'message': 'INVALID ACCESS - Missing AUTH key'

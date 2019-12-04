@@ -34,10 +34,10 @@ class Event {
         con.query(sql);
     }
 
-    static updateTicket(id, name, number, valid = 1) {
+    static updateTicket(obj) {
         let sql = "UPDATE ticket\
-            SET name = '" + name + "', number = '" + number + "', valid= '" + valid + "' \
-            WHERE id = '" + id + "'";
+            SET name = '" + obj.name + "', number = '" + obj.number + "', valid= '" + obj.valid + "' \
+            WHERE id = '" + obj.id + "'";
         con.query(sql);
 
     }
@@ -48,8 +48,9 @@ class Event {
     }
 
     static async getTicket(id) {
-        let sql = "SELECT * FROM `ticket` WHERE id = '" + id + "'";
-        return await con.getData(sql)[0];
+        let sql = "SELECT * FROM ticket WHERE id = " + id ;
+        let data = await con.getData(sql);
+        return data;
 
     }
 
