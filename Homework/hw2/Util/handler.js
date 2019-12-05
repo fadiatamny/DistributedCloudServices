@@ -1,4 +1,4 @@
-const Log = require('./logger');
+const log = require('./logger');
 class Handler {
     static parseQuery(query) {
         let obj = {};
@@ -14,11 +14,10 @@ class Handler {
         if (!err.status) {
             err['status'] = 500
             err.message = 'SERVER ERROR';
-        } else {
-            Log.emit('write',`[POST] ${route} - ${err.status} - ${err.message}`);
-            res.writeHeader(err.status);
-            res.end(`Error occured - ${err.message}`);
         }
+        log.emit('write', `${route.method} ${route.path} - ${err.status} - ${err.message}`);
+        res.writeHeader(err.status);
+        res.end(`Error occured - ${err.message}`);
     };
 
     static validateKey(req) {

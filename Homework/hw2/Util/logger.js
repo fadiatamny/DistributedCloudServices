@@ -46,9 +46,9 @@ class Log extends EventEmitter {
 
 }
 
-const log = (new Log())
+let log = (new Log())
     .on('write', (data) => { Log.write(data); return;})
     .on('initialize', ()=>{ Log.initialize(); return;})
     .on('read', ()=>{ Log.read(); return;});
 
-module.exports = Log;
+module.exports = log;

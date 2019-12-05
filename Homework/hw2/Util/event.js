@@ -3,59 +3,114 @@ const con = new(require('../Database/connector'))();
 const max = process.env.MAX_COUNT || 10;
 
 class Event {
-    static async addTicket(name) {
-        let sql = "SELECT MIN(number) \
-            FROM ticket \
-            WHERE valid = 0";
-        let num = (await con.getData(sql))[0]['MIN(number)'];
-        if (!num) {
-            sql = "SELECT COUNT(id) \
-            FROM ticket";
-            num = (await con.getData(sql))[0]['COUNT(id)'];
-            if (num >= max)
-                throw ({
-                    'status': 406,
-                    'message': 'OVERFLOW IN TICKETS'
-                });
-            else
-                num++;
-        } else {
-            sql = "DELETE FROM ticket WHERE number = '" + num + "'";
-            con.query(sql);
+
+    static async checkMax(num) {
+        let sql = "SELECT SUM(ticketsNumber) \
+        FROM `Order`";
+        let b;
+        let count = await con.getData(sql);
+        if (count.errno) {
+            throw {
+                'status': 500,
+                'message': 'Error performing query',
+            };
         }
+        if (count) {
+            count = count[0]['SUM(ticketsNumber)'];
+            if ((count + num) > max) {
+                throw {
+                    'status': 406,
+                    'message': 'Max number of orders reached'
+                };
+            }
+        }
+    }
+    static async addOrder(obj) {
+        try {
+            await Event.checkMax(obj.ticketsNumber);
+            let sql = "INSERT INTO `Order` (id,name,created_at,updated_at,ticketsNumber) VALUES ('" + obj.id + "','" + obj.name + "',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP," + obj.ticketsNumber + ")";
 
-        sql = "INSERT INTO `ticket` (id,name,timestamp,number,valid) \
-            VALUES(NULL,'" + name + "',CURRENT_TIMESTAMP," + num + ",1)";
-        con.query(sql);
+            let err = await con.query(sql);
+            if (err)
+                throw {
+                    'status': 500,
+                    'message': 'Error performing query',
+                };
+        } catch (err) {
+            throw err;
+        };
     }
 
-    static deleteTicket(id) {
-        let sql = "DELETE FROM ticket WHERE id = '" + id + "'";
-        con.query(sql);
+    static async deleteOrder(id) {
+        let sql = "DELETE FROM `Order` WHERE id = '" + id + "'";
+        try {
+            let err = await con.query(sql);
+            if (err)
+                throw {
+                    'status': 500,
+                    'message': 'Error performing query',
+                };
+        } catch (err) {
+            throw err;
+        };
     }
 
-    static updateTicket(obj) {
-        let sql = "UPDATE ticket\
-            SET name = '" + obj.name + "', number = '" + obj.number + "', valid= '" + obj.valid + "' \
+    static async updateOrder(obj,oldNumber) {
+        try {
+            let val = obj.ticketsNumber;
+            if(oldNumber)
+                val = val - oldNumber; 
+            await Event.checkMax(val);
+            let sql = "UPDATE `Order`\
+            SET name = '" + obj.name + "', ticketsNumber = '" + obj.ticketsNumber + "', updated_at = CURRENT_TIMESTAMP \
             WHERE id = '" + obj.id + "'";
-        con.query(sql);
-
+            let err = await con.query(sql);
+            if (err) throw err;
+        } catch (err) {
+            throw err;
+        };
     }
 
-    static async getAllTickets() {
-        let sql = "SELECT * FROM `ticket`";
-        return await con.getData(sql);
+    static async getAllOrders() {
+        let sql = "SELECT * FROM `Order`";
+        try {
+            let data = await con.getData(sql);
+            if (data.errno) {
+                throw {
+                    'status': 500,
+                    'message': 'Error performing query',
+                };
+            }
+            return data;
+        } catch (err) {
+            throw err;
+        };
     }
 
-    static async getTicket(id) {
-        let sql = "SELECT * FROM ticket WHERE id = " + id ;
-        let data = await con.getData(sql);
-        return data;
-
+    static async getOrder(id) {
+        let sql = "SELECT * FROM `Order` WHERE id = " + id;
+        try {
+            let data = await con.getData(sql);
+            if (data.errno) {
+                throw {
+                    'status': 500,
+                    'message': 'Error performing query',
+                };
+            }
+            return data;
+        } catch (err) {
+            throw err;
+        };
     }
 
-    static clearEvent() {
-
+    static async clearOrders() {
+        let sql = 'DELETE FROM `Order`';
+        let err = await con.query(sql);
+        if (err)
+            throw {
+                'status': 500,
+                'message': 'Error performing query',
+            };
     }
 }
 

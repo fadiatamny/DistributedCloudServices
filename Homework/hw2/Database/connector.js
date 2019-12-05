@@ -3,14 +3,13 @@ const sqlite = require('sqlite3');
 class Connector {
 
     constructor(fileName = process.env.SQLITE_FILE || "Database/database.sqlite") {
-        let self = this;
         this.db = new sqlite.Database(fileName, (err) => {
             if (err) {
-                throw ({
+                throw {
                     'status': 500,
-                    'message': 'Could not connect to database',
+                    'message': 'Error performing query',
                     'err': err
-                })
+                };
             } else {
                 this.createTables();
             }
@@ -21,12 +20,12 @@ class Connector {
 
     createTables() {
         this.db.run(
-            "CREATE TABLE IF NOT EXISTS `ticket` (\
-            `id` INTEGER PRIMARY KEY AUTOINCREMENT,\
+            "CREATE TABLE IF NOT EXISTS `Order` (\
+            `id` varchar(64) UNIQUE PRIMARY KEY,\
             `name` varchar(64) NOT NULL,\
-            `timestamp` timestamp NOT NULL,\
-            `number` INTEGER UNIQUE NOT NULL,\
-            `valid` boolean DEFAULT 1)"
+            `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,\
+            `updated_at` timestamp,\
+            `ticketsNumber` INTEGER NOT NULL)"
         );
     }
 
@@ -36,34 +35,30 @@ class Connector {
             this.db.serialize(() => {
                 this.db.all(sql, params, (err, rows) => {
                     if (err) {
-                        throw ({
-                            'status': 500,
-                            'message': 'Error performing query',
-                            'err': err
-                        })
+                        resolve(err);
+                        return;
                     }
                     if (rows) {
                         resolve(rows);
                         return;
                     }
-                    resolve(undefined);
                 });
             })
-        })
-    }
-
-
-    query(sql, params) {
-        this.db.run(sql, params, (err) => {
-            if (err) {
-                throw ({
-                    'status': 500,
-                    'message': 'Error performing query',
-                    'err': err
-                })
-            }
         });
     }
-}
 
-module.exports = Connector;
+
+    async query(sql, params) {
+        return new Promise((resolve, reject) => {
+                this.db.run(sql, params, (err) => {
+                    if(err)
+                        resolve(err);
+                    else
+                        resolve(undefined)
+                });
+            });
+        }
+
+    }
+
+    module.exports = Connector;

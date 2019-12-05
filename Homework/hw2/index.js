@@ -4,9 +4,9 @@ const router = new(require('./Util/router'))();
 const api = require('./api');
 const fs = require('fs');
 const port = process.env.PORT || 1337;
-const Log = new(require('./Util/logger'))();
+const log = require('./Util/logger');
 
-Log.emit('initalize');
+log.emit('initialize');
 
 router.use('/api', api);
 
