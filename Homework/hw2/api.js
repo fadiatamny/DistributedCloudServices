@@ -3,7 +3,7 @@ const log = require('./Util/logger');
 const event = require('./Util/event');
 const handler = require('./Util/handler');
 
-router.get('/getAllOrders', async (req, res) => {
+router.get('/orders/read', async (req, res) => {
     try {
         handler.validateKey(req);
         let result = await event.getAllOrders();
@@ -11,18 +11,18 @@ router.get('/getAllOrders', async (req, res) => {
             'status': 204,
             'message': 'There are no orders'
         };
-        log.emit('write', '[GET] /getOrder - 200');
+        log.emit('write', '[GET] /orders/read - 200');
         res.writeHeader(200);
         res.end(JSON.stringify(result));
     } catch (err) {
         handler.error(err, res, {
-            'path': '/getAllOrders',
+            'path': '/orders/read',
             'method': '[GET]'
         });
     }
 });
 
-router.get('/getOrder', async (req, res) => {
+router.get('/order/read', async (req, res) => {
     try {
         let query = handler.validateKey(req);
         if (!query.id) throw {
@@ -35,23 +35,24 @@ router.get('/getOrder', async (req, res) => {
             'message': 'There is no order with that id'
         };
         result = result[0];
-        log.emit('write', '[GET] /getOrder - 200');
+        log.emit('write', '[GET] /order/read - 200');
         res.writeHeader(200);
         res.end(JSON.stringify(result));
     } catch (err) {
         handler.error(err, res, {
-            'path': '/getOrder',
+            'path': '/order/read',
             'method': '[GET]'
         });
     }
 
 });
 
-router.get('/getLog', async (req, res) => {
+router.get('/logs/read', async (req, res) => {
     const fs = require('fs');
     try {
         handler.validateKey(req);
         const file = fs.createReadStream(process.env.LOG_FILE || './log.txt');
+        res.writeHeader(200);
         file.pipe(res);
         file.on('finish', () => {
             file.close();
@@ -59,13 +60,13 @@ router.get('/getLog', async (req, res) => {
 
     } catch (err) {
         handler.error(err, res, {
-            'path': '/updateOrder',
-            'method': '[PUT]'
+            'path': '/logs/read',
+            'method': '[GET]'
         });
     }
 });
 
-router.post('/addOrder', async (req, res) => {
+router.post('/order/create', async (req, res) => {
     let body = '';
 
     req.on('data', chunk => {
@@ -87,27 +88,27 @@ router.post('/addOrder', async (req, res) => {
             };
 
             await event.addOrder(body);
-            log.emit('write', '[GET] /addOrder - 200');
+            log.emit('write', '[GET] /order/create - 200');
             res.writeHeader(200);
             res.end('Successfully purchased a Order!');
         } catch (err) {
             handler.error(err, res, {
-                'path': '/addOrder',
+                'path': '/order/create',
                 'method': '[POST]'
             });
         }
     });
 });
 
-router.put('/updateOrder', async (req, res) => {
+router.put('/order/update', async (req, res) => {
     let params = req.url.toLowerCase().split('/');
-    params = req.url.split('/').splice(params.indexOf('updateOrder'.toLowerCase()) + 1);
+    params = req.url.split('/').splice(params.indexOf('update'.toLowerCase()) + 1);
     if (params == [''])
         handler.error({
             'status': 403,
             'message': 'missing id to update'
         } , res, {
-            'path': '/updateOrder',
+            'path': '/order/update',
             'method': '[PUT]'
         });
     let item = await event.getOrder(params[0]);
@@ -116,7 +117,7 @@ router.put('/updateOrder', async (req, res) => {
             'status': 404,
             'message': 'ID does not EXIST'
         }, res, {
-            'path': '/updateOrder',
+            'path': '/order/update',
             'method': '[PUT]'
         });
     } else {
@@ -135,14 +136,13 @@ router.put('/updateOrder', async (req, res) => {
                     item.name = body.name;
                 if (body.ticketsNumber)
                     item.ticketsNumber = body.ticketsNumber;
-                console.log(oldTickets);
                 await event.updateOrder(item, oldTickets);
-                log.emit('write', '[PUT] /updateOrder - 200');
+                log.emit('write', '[PUT] /order/update - 200');
                 res.writeHeader(200);
                 res.end('Successfully updated an order!');
             } catch (err) {
                 handler.error(err, res, {
-                    'path': '/updateOrder',
+                    'path': '/order/update',
                     'method': '[PUT]'
                 });
             }
@@ -151,10 +151,10 @@ router.put('/updateOrder', async (req, res) => {
 
 });
 
-router.delete('/deleteOrder', async (req, res) => {
+router.delete('/order/delete', async (req, res) => {
     try {
         let params = req.url.toLowerCase().split('/');
-        params = req.url.split('/').splice(params.indexOf('deleteOrder'.toLowerCase()) + 1);
+        params = req.url.split('/').splice(params.indexOf('delete'.toLowerCase()) + 1);
         if (params == [''])
             throw {
                 'status': 403,
@@ -166,22 +166,21 @@ router.delete('/deleteOrder', async (req, res) => {
             'message': 'There is no order with that id'
         };
         await event.deleteOrder(params[0]);
-        log.emit('write', '[DELETE] /deleteOrder - 200');
+        log.emit('write', '[DELETE] /order/delete - 200');
         res.writeHeader(200);
         res.end('Successfully deleted order!');
     } catch (err) {
         handler.error(err, res, {
-            'path': '/deleteOrder',
+            'path': '/order/delete',
             'method': '[DELETE]'
         });
     };
 });
 
-router.delete('/resetOrders', async (req, res) => {
+router.delete('/orders/reset', async (req, res) => {
     try {
         let params = req.url.toLowerCase().split('/');
-        params = req.url.split('/').splice(params.indexOf('resetOrders'.toLowerCase()) + 1);
-
+        params = req.url.split('/').splice(params.indexOf('reset'.toLowerCase()) + 1);
         if (params[0] != process.env.KEY)
             throw {
                 'status': 403,
@@ -189,12 +188,12 @@ router.delete('/resetOrders', async (req, res) => {
             }
 
         await event.clearOrders();
-        log.emit('write', '[DELETE] /resetOrders - 200');
+        log.emit('write', '[DELETE] /orders/reset - 200');
         res.writeHeader(200);
         res.end('Successfully reset order list!');
     } catch (err) {
         handler.error(err, res, {
-            'path': '/resetOrders',
+            'path': '/orders/reset',
             'method': '[DELETE]'
         });
     };

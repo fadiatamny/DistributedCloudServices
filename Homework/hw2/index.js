@@ -9,7 +9,6 @@ const log = require('./Util/logger');
 log.emit('initialize');
 
 router.use('/api', api);
-
 http.createServer((req, res) => {
     router.handler(req, res);
 }).listen(port);
