@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const dotenv = require('dotenv').config();
+
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.COLLECTION}?retryWrites=true&w=majority`;
+
 const options = {
     useCreateIndex: true,
     useNewUrlParser: true,
@@ -16,6 +17,8 @@ let scheme = new mongoose.Schema({
     barcode: {
         type: Number,
         required: true,
+        index: true,
+        unique: true
     },
     name: {
         type: String,
@@ -29,8 +32,6 @@ let scheme = new mongoose.Schema({
     timestamps: true,
 });
 
-// scheme.path('releaseDate').validate(obj => (obj.split('/').length-1)!=3,'Please use correct DD/MM/YY format');
-
 scheme.virtual('id', function () {
     return this._id;
 });
@@ -39,24 +40,25 @@ scheme.virtual('details', function () {
     return `${this.id}\t${this.name}\t${this.releaseDate}`;
 });
 
-scheme.static('getMovie', function (id) {
-    return new Promise(function (reject, resolve) {
-        this.find({});
+scheme.static('getMovie', async function (barcode) {
+    return await this.find({
+        barcode: barcode
+    }, (err, res) => {
+        if (err) throw err;
     });
 });
 
 scheme.static('getMovies', async function () {
-    let obj;
-    await this.find((err, res) => {
+    return await this.find({}, (err, res) => {
         if (err) throw err;
-        obj = res;
     });
-    return obj;
 });
 
 scheme.method('exists', async function () {
     return await this.model('Movies').find({
         barcode: this.barcode
+    }, (err, res) => {
+        if (err) throw err;
     });
 });
 
