@@ -13,9 +13,9 @@ mongoose
     .catch(err => console.log(`connection error:`, err))
 
 let scheme = new mongoose.Schema({
-    id: {
+    barcode: {
         type: Number,
-        required: true
+        required: true,
     },
     name: {
         type: String,
@@ -26,32 +26,41 @@ let scheme = new mongoose.Schema({
         default: Date.now
     },
 }, {
-    timestamps: true
+    timestamps: true,
 });
-
-// scheme.virtual('toString', () => {
-//     return `${this.id}\t${this.name}\t${this.releaseDate}`;
-// });
 
 // scheme.path('releaseDate').validate(obj => (obj.split('/').length-1)!=3,'Please use correct DD/MM/YY format');
 
-scheme.static('getMovie', (id) => {
+scheme.virtual('id', function () {
+    return this._id;
+});
+
+scheme.virtual('details', function () {
+    return `${this.id}\t${this.name}\t${this.releaseDate}`;
+});
+
+scheme.static('getMovie', function (id) {
     return new Promise(function (reject, resolve) {
-        this.find((err, res) => {
-            if (err) throw err;
-            resolve(res);
-        });
+        this.find({});
     });
 });
 
-scheme.method('exists', (id) => {
-    return new Promise(function (reject, resolve) {
-        this.findById(id, (err, res) => {
-            if (err) throw err;
-            resolve(res);
-        });
+scheme.static('getMovies', async function () {
+    let obj;
+    await this.find((err, res) => {
+        if (err) throw err;
+        obj = res;
+    });
+    return obj;
+});
+
+scheme.method('exists', async function () {
+    return await this.model('Movies').find({
+        barcode: this.barcode
     });
 });
+
+
 
 let Movies = mongoose.model('Movies', scheme);
 
