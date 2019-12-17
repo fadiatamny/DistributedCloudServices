@@ -1,5 +1,7 @@
-ClassExcersises/Ex1-C#/bin
 .vscode
 node_modules/
-Homework/hw1/bin
 .env
+ClassExcersises/Ex1-C#/bin
+ClassExcersises/Ex1-C#/obj
+Homework/hw1/bin
+Homework/hw1/obj
