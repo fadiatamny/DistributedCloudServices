@@ -6,6 +6,10 @@ router.get('/',(req,res)=>{
     mc.create(req,res);
 });
 
+router.get('/remove/:id',(req,res)=>{
+    mc.delete(req,res);
+});
+
 router.post('/movie/create',(req, res)=>{
     mc.create(req,res);
 });

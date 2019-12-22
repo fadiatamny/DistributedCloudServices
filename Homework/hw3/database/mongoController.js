@@ -40,10 +40,8 @@ scheme.virtual('details', function () {
     return `${this.id}\t${this.name}\t${this.releaseDate}`;
 });
 
-scheme.static('getMovie', async function (barcode) {
-    return await this.find({
-        barcode: barcode
-    }, (err, res) => {
+scheme.static('getMovie', async function (id) {
+    return await this.findById(id, (err, res) => {
         if (err) throw err;
     });
 });
@@ -54,12 +52,16 @@ scheme.static('getMovies', async function () {
     });
 });
 
-scheme.method('exists', async function () {
-    return await this.model('Movies').find({
-        barcode: this.barcode
-    }, (err, res) => {
-        if (err) throw err;
+scheme.static('deleteMovie', async function(id){
+    await this.deleteOne({id:id},(err)=>{
+        if(err) throw err;
     });
+});
+
+scheme.method('exists', async function () {
+    return await this.model('Movies').findById(this.id,(err, res)=>{
+        if(err) throw err;
+    })
 });
 
 
