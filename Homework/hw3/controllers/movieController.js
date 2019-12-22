@@ -2,7 +2,6 @@ const Movies = require('../database/mongoController');
 const mongoose = require('mongoose');
 const moment = require('moment');
 class MovieController {
-
     static async create(req, res) {
         try {
             if (!req.body.barcode || !req.body.name || !req.body.year || !req.body.month || !req.body.day) throw {
