@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const moment = require('moment');
 
 const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}/${process.env.COLLECTION}?retryWrites=true&w=majority`;
 
@@ -15,7 +16,7 @@ mongoose
 
 let scheme = new mongoose.Schema({
     barcode: {
-        type: Number,
+        type: String,
         required: true,
         index: true,
         unique: true
@@ -25,8 +26,8 @@ let scheme = new mongoose.Schema({
         required: true
     },
     releaseDate: {
-        type: Date,
-        default: Date.now
+        type: String,
+        default: moment().format("DD-MM-YYYY")
     },
 }, {
     timestamps: true,
@@ -52,8 +53,12 @@ scheme.static('getMovies', async function () {
     });
 });
 
+scheme.static('updateMovie', async function (obj) {
+    return await this.updateOne({ _id: obj._id }, obj);
+});
+
 scheme.static('deleteMovie', async function(id){
-    await this.deleteOne({id:id},(err)=>{
+    await this.deleteOne({_id:id},(err)=>{
         if(err) throw err;
     });
 });
