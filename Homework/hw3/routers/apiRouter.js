@@ -18,7 +18,7 @@ router.get('/movies/filter/:data',(req,res)=>{
     mc.filter(req,res);
 });
 
-router.get('/movies/TopRated/',(req,res)=>{
+router.get('/movies/TopRated',(req,res)=>{
     mc.topRated(req,res);
 });
 
