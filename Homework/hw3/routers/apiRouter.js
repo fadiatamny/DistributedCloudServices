@@ -14,6 +14,14 @@ router.get('/movie/read/:barcode',(req,res)=>{
     mc.read(req,res);
 });
 
+router.get('/movies/filter/:data',(req,res)=>{
+    mc.filter(req,res);
+});
+
+router.get('/movies/TopRated/',(req,res)=>{
+    mc.topRated(req,res);
+});
+
 router.get('/movies/read',(req,res)=>{
     mc.readAll(req,res);
 });

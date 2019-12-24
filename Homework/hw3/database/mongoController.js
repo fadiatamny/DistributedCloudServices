@@ -29,6 +29,10 @@ let scheme = new mongoose.Schema({
         type: String,
         default: moment().format("DD-MM-YYYY")
     },
+    rating: {
+        type: Number,
+        default: 5
+    }
 }, {
     timestamps: true,
 });
@@ -58,7 +62,7 @@ scheme.static('updateMovie', async function (obj) {
 });
 
 scheme.static('deleteMovie', async function(id){
-    await this.deleteOne({_id:id},(err)=>{
+    return await this.deleteOne({_id:id},(err)=>{
         if(err) throw err;
     });
 });
@@ -68,8 +72,6 @@ scheme.method('exists', async function () {
         if(err) throw err;
     })
 });
-
-
 
 let Movies = mongoose.model('Movies', scheme);
 
