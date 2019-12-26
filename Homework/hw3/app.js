@@ -8,11 +8,15 @@ const apiRoute = require('./routers/apiRouter');
 const app = express();
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({
+    extended: false
+}));
 
 
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms', {
-    stream: fs.createWriteStream('./access.log', {flags: 'a'})
+    stream: fs.createWriteStream('./access.log', {
+        flags: 'a'
+    })
 }));
 
 const morganMiddleware = morgan(function (tokens, req, res) {
@@ -27,10 +31,15 @@ const morganMiddleware = morgan(function (tokens, req, res) {
 
 app.use(morganMiddleware);
 
-app.use('/api',apiRoute);
+app.use('/api', apiRoute);
 
-app.all('*', (req,res)=>{
+app.all('*', (req, res) => {
     res.status(404).send('Page Not Found!');
+});
+
+app.use((err, req, res, next) => {
+    res.status(err.status || 500);
+    res.render("error");
 });
 
 module.exports = app;
