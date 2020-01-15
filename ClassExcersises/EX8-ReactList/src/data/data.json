@@ -1,0 +1,22 @@
+[
+    {
+        "id": 0,
+        "idea": "Tripper API",
+        "group": "Naama, Dekel, Yossi, Elad"
+    },
+    {
+        "id": 1,
+        "idea": "Cyber Crawler App",
+        "group": "Aviad, Yoni, Bat-El, Maayan"
+    },
+    {
+        "id": 2,
+        "idea": "Another Cool App",
+        "group": "Sima, Yossi, Oren, Haim"
+    },
+    {
+        "id": 3,
+        "idea": "Simpler",
+        "group": "Elisheva, Maayan"
+    }
+]

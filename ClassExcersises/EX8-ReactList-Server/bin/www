@@ -1,0 +1,16 @@
+/**
+ * @project IdeasList Server
+ * @author Fadi Atamny
+ * @license GPLV3
+ */
+
+require('dotenv').config();
+const app = require('../app');
+const http = require('http');
+
+const port = process.env.PORT || 1337;
+app.set("port", port);
+
+let server = http.createServer(app);
+server.listen(port);
+
